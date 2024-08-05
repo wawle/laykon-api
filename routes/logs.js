@@ -3,6 +3,8 @@ const { createLog } = require("../controllers/logs");
 
 const router = express.Router();
 
-router.route("/").post(createLog);
+const { protect } = require("../middleware/auth");
+
+router.route("/").post(protect, createLog);
 
 module.exports = router;
