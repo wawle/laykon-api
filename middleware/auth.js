@@ -1,14 +1,26 @@
+const jwt = require("jsonwebtoken");
 const asyncHandler = require("./async");
 const ErrorResponse = require("../utils/errorResponse");
 
 // Protect routes
 exports.protect = asyncHandler(async (req, res, next) => {
-  let token = req.headers.token;
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Basic")
+  ) {
+    // Set token from Basic token in header
+    token = req.headers.authorization.split(" ")[1];
+  }
 
   // Make sure token exists
-  if (token !== process.env.API_KEY) {
+  if (!token) {
     return next(new ErrorResponse("Not authorized to access this route", 401));
   }
+
+  if (token !== process.env.TOKEN)
+    return next(new ErrorResponse("Not authorized to access this route", 401));
 
   next();
 });
